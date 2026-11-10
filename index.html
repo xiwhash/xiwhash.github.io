@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<base href="/">
+<title>鎴戠殑闊冲０搴?/title>
+<meta charset="utf-8">
+<meta name="description" content="鎴戠殑闊冲０搴?- 浣滃搧鍒楄〃">
+<meta name="format-detection" content="telephone=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#027be3">
+<link rel="icon" type="image/png" href="/statics/app-logo-128x128.png">
+<link rel="stylesheet" href="/css/app.css">
+<link rel="manifest" href="/manifest.json">
+</head>
+<body>
+<noscript>闇€瑕?JavaScript 鎵嶈兘杩愯銆?/noscript>
+<div id="q-app"></div>
+<script>
+/* 鍏堟敞鍐?Service Worker锛堟嫤鎴?/api/*锛夛紝棣栨鍔犺浇鏃剁瓑瀹冩帴绠″悗鍐嶆覆鏌?*/
+(function () {
+  var booted = false;
+  function start() {
+    if (booted) return;
+    booted = true;
+    var s1 = document.createElement("script");
+    s1.src = "/vendor/videojs-v10/video.js";
+    s1.onload = function () {
+      var s2 = document.createElement("script");
+      s2.src = "/js/vendor.js";
+      s2.onload = function () {
+        var s3 = document.createElement("script");
+        s3.src = "/js/app.js";
+        document.body.appendChild(s3);
+      };
+      document.body.appendChild(s2);
+    };
+    document.body.appendChild(s1);
+  }
+
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/sw.js", { scope: "/" }).then(function (reg) {
+      if (navigator.serviceWorker.controller) { start(); return; }
+      // 棣栨璁块棶锛氱瓑 SW 婵€娲诲苟鎺ョ锛屽啀 reload 涓€娆?      navigator.serviceWorker.ready.then(function () {
+        if (navigator.serviceWorker.controller) { start(); }
+        else {
+          try { sessionStorage.setItem("sw-reload", "1"); } catch (e) {}
+          location.reload();
+        }
+      });
+      navigator.serviceWorker.addEventListener("controllerchange", start);
+    }).catch(function () { start(); });
+  } else {
+    start();
+  }
+})();
+</script>
+</body>
+</html>
+
